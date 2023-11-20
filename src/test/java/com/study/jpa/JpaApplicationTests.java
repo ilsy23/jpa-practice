@@ -1,4 +1,4 @@
-package com.stydy.jpa;
+package com.study.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
