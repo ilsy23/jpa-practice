@@ -2,6 +2,14 @@ package com.study.jpa.chap05_practice.api;
 
 import com.study.jpa.chap05_practice.dto.*;
 import com.study.jpa.chap05_practice.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
+@Tag(name = "post API", description = "게시물 조회, 등록 및 수정, 삭제 api 입니다.")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -52,7 +61,13 @@ public class PostApiController {
         }
     }
 
-    // 게시물 등록
+    @Operation(summary = "게시물 작성", description = "게시물 작성을 담당하는 메서드 입니다.")
+    @Parameters({
+            @Parameter(name = "writer", description = "게시물의 작성자 이름", example = "춘식이", required = true),
+            @Parameter(name = "title", description = "게시물의 제목", example = "제목입니다", required = true),
+            @Parameter(name = "content", description = "게시물의 내용", example = "내용입니다"),
+            @Parameter(name = "hashTags", description = "게시물의 해시태그", example = "['태그1', '태그2']")
+    })
     @PostMapping
     public ResponseEntity<?> create(
             @Validated @RequestBody PostCreateDTO dto,
@@ -79,6 +94,12 @@ public class PostApiController {
         }
     }
 
+    @Operation(summary = "게시물 수정", description = "게시물 수정을 담당하는 메서드 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 완료!", content = @Content(schema = @Schema(implementation = PostDetailResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "입력값 검증 실패"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND")
+    })
     // 게시물 수정
     @RequestMapping(method = {RequestMethod.PATCH, RequestMethod.PUT})
     public ResponseEntity<?> update(
